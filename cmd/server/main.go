@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"path/filepath"
 	"runtime"
 
+	"github.com/madeindra/golang-stream-processing/internal/model"
 	"github.com/madeindra/golang-stream-processing/pkg/reader"
 )
 
@@ -17,7 +19,7 @@ func main() {
 
 	// read all files and pass the result to the function
 	if err := reader.ReadAllFiles(filepath.Join(dir, "../../../data"), passLine); err != nil {
-		panic(err)
+		fmt.Println("error: ", err)
 	}
 }
 
@@ -35,8 +37,15 @@ func passLine(lines string) error {
 	return nil
 }
 
-func process(lines string, err chan<- error) {
-	// print content of lines
-	fmt.Println(lines)
-	err <- nil
+func process(lines string, chErr chan<- error) {
+	// parse json
+	data := &model.Data{}
+	if err := json.Unmarshal([]byte(lines), data); err != nil {
+		chErr <- err
+		return
+	}
+
+	// print parsed line of data
+	fmt.Println(data)
+	chErr <- nil
 }
