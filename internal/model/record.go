@@ -6,3 +6,10 @@ type Data struct {
 	Quantity int    `json:"qty"`
 	Price    int    `json:"price"`
 }
+
+// StockDetail represents detail of stock
+type StockDetail struct {
+	Name         string
+	Quantity     int
+	AveragePrice float64
+}
